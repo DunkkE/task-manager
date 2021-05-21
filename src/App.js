@@ -7,9 +7,10 @@ import Tasks from './components/Tasks'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import About from './components/About'
 import Footer from './components/Footer'
+import Card from './components/Card'
 function App() {
   const [showAddTask, setShowAddTask] = useState(false)
-  var [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState([])
   useEffect(()=> {
     const getTasks = async () => {
       const tasksFromServer = await fetchTasks()
@@ -81,8 +82,10 @@ const onShowAdd = () => {
         )}/>
         <Route path='/about' component={About}/>
         <Footer/>
+        
       </div>
     </Router>
+
   );
 }
 
