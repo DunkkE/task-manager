@@ -7,21 +7,25 @@ import Tasks from './components/Tasks'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import About from './components/About'
 import Footer from './components/Footer'
+import {ThingsProvider} from './components/thingsContext' 
 import 'bootstrap/dist/css/bootstrap.min.css'
+
 function App() {
-  const [showAddTask, setShowAddTask] = useState(false)
-  const [tasks, setTasks] = useState([])
-  
   const testContext = React.createContext("blah")
+  const [showAddTask, setShowAddTask] = useState(false)
+  const sfy = (obj) => {
+    console.log((JSON.stringify(obj)));
+  }
   useEffect(()=> {
     const getTasks = async () => {
-      console.log(testContext)
-      console.log(testContext.Provider.value)
+      //sfy(testContext)
+      console.log("before")
+      sfy(ThingsProvider.value)
       const tasksFromServer = await fetchTasks()
-      setTasks(tasksFromServer)
-      testContext.Provider.value = tasksFromServer
-      console.log(testContext)
-      console.log(testContext.Provider.value)
+      ThingsProvider.value = tasksFromServer
+      console.log("after")
+      sfy(ThingsProvider.value)
+      
     }
       getTasks()
   }, [])
@@ -41,8 +45,7 @@ const deleteTask = async(id) => {
   await fetch(`http://localhost:5000/tasks/${id}`, {
     method: 'DELETE'
   })
-  setTasks(tasks.filter((task) => task.id !== id))
-
+  ThingsProvider.value = ThingsProvider.value.filter((task) => task.id !== id)
 }
 
 const addTask = async(task) => {
@@ -54,7 +57,7 @@ const addTask = async(task) => {
     body: JSON.stringify(task)
   })
   const data = await res.json()
-  setTasks([...tasks,data])
+  ThingsProvider.value = [...ThingsProvider.value,data]
 }
 
 const toggleReminder = async(id) => {
@@ -69,12 +72,9 @@ const updateTask = {...toggleTask, reminder: !toggleTask.reminder}
   })
 
   const data = await res.json()
-  setTasks(tasks.map((task) => task.id=== id ? {...task, reminder: data.reminder} : task))
 }
 const onShowAdd = () => {
-  console.log(testContext)
-  console.log(testContext.Provider)
-  console.log(testContext.Provider.value)
+    //sfy(testContext)
     setShowAddTask(!showAddTask)
     console.log(showAddTask)
     
@@ -94,7 +94,7 @@ const onHide = () => {
         
         <Route path='/' exact render={(props)=> (
           <>
-          <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder}/>
+          <Tasks onDelete={deleteTask} onToggle={toggleReminder}/>
           <AddTask onAdd={addTask} showAddTask={showAddTask} onHide={onHide} />
           </>
         )}/>

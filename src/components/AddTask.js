@@ -2,16 +2,14 @@ import { Modal, Form, Button } from 'react-bootstrap'
 import React from 'react'
 import {useState} from 'react'
 
-
 const AddTask = ({onAdd, showAddTask, onHide}) => {
     const [text,setText] = useState('')
     const [day,setDay] = useState('')
     const [reminder,setReminder] = useState(false)
-
+    const [show, setShow] = useState(false)
 
   const handleClose = () => {
       onHide()
-      console.log("othertest")
     };
 
     const onSubmit = (e) => {
