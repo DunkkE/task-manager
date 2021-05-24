@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useContext} from 'react'
 import AddTask from './components/AddTask'
 import './App.css';
 import Header from './components/Header'
@@ -8,24 +8,22 @@ import {BrowserRouter as Router, Route} from 'react-router-dom'
 import About from './components/About'
 import Footer from './components/Footer'
 import {ThingsProvider} from './components/thingsContext' 
+import ThingsContext from './components/thingsContext'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
-  const testContext = React.createContext("blah")
+
+  const [tasks, setTasks] = useState([])
   const [showAddTask, setShowAddTask] = useState(false)
+
   const sfy = (obj) => {
     console.log((JSON.stringify(obj)));
   }
   useEffect(()=> {
     const getTasks = async () => {
-      //sfy(testContext)
-      console.log("before")
-      sfy(ThingsProvider.value)
+     
       const tasksFromServer = await fetchTasks()
-      ThingsProvider.value = tasksFromServer
-      console.log("after")
-      sfy(ThingsProvider.value)
-      
+      setTasks(tasksFromServer)
     }
       getTasks()
   }, [])
@@ -45,7 +43,8 @@ const deleteTask = async(id) => {
   await fetch(`http://localhost:5000/tasks/${id}`, {
     method: 'DELETE'
   })
-  ThingsProvider.value = ThingsProvider.value.filter((task) => task.id !== id)
+  setTasks(tasks.filter((task) => task.id !== id))
+
 }
 
 const addTask = async(task) => {
@@ -57,10 +56,11 @@ const addTask = async(task) => {
     body: JSON.stringify(task)
   })
   const data = await res.json()
-  ThingsProvider.value = [...ThingsProvider.value,data]
+  setTasks([...tasks,data])
 }
 
 const toggleReminder = async(id) => {
+  console.log("reminder toggled")
   const toggleTask = await fetchTask(id)
 const updateTask = {...toggleTask, reminder: !toggleTask.reminder}
   const res = await fetch(`http://localhost:5000/tasks/${id}`, {
@@ -89,12 +89,13 @@ const onHide = () => {
 
   return (
     <Router>
+      <ThingsProvider value={{'tasks': tasks, 'deleteFunc': deleteTask, 'toggleFunc': toggleReminder}}>
       <div className="container">
         <Header title='Table Test' onClick={onShowAdd}/>
         
         <Route path='/' exact render={(props)=> (
           <>
-          <Tasks onDelete={deleteTask} onToggle={toggleReminder}/>
+          <Tasks/>
           <AddTask onAdd={addTask} showAddTask={showAddTask} onHide={onHide} />
           </>
         )}/>
@@ -102,6 +103,7 @@ const onHide = () => {
         <Footer/>
         
       </div>
+      </ThingsProvider>
     </Router>
 
   );
