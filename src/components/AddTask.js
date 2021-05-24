@@ -1,11 +1,18 @@
+import { Modal, Form, Button } from 'react-bootstrap'
 import React from 'react'
 import {useState} from 'react'
 
 
-const AddTask = ({onAdd}) => {
+const AddTask = ({onAdd, showAddTask, onHide}) => {
     const [text,setText] = useState('')
     const [day,setDay] = useState('')
     const [reminder,setReminder] = useState(false)
+
+
+  const handleClose = () => {
+      onHide()
+      console.log("othertest")
+    };
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -21,25 +28,40 @@ const AddTask = ({onAdd}) => {
         setText('')
         setDay('')
         setReminder(false)
+        handleClose()
     }
   
     return (
-        <form className = 'add-form' onSubmit={onSubmit}>
-            <div className='form-control'>
-                <label>Task</label>
-                <input type='text' placeholder='Add Task' value={text} onChange={(e) => setText(e.target.value)}/>
-            </div>
-            <div className='form-control'>
-                <label>Date and Time</label>
-                <input type='text' placeholder='Add Date and Time' value={day} onChange={(e) => setDay(e.target.value)}/>
-            </div>
-            <div className='form-control form-control-check'>
-                <label>Reminder</label>
-                <input type='checkbox' checked={reminder} value={reminder} onChange={(e) => setReminder(e.currentTarget.checked)} />
-            </div>
-            <input type='submit' value='Save' className='btn btn-block'  />
-        </form>
-    )
-}
+        <>
+          <Modal show={showAddTask} onHide={handleClose}>
+            <Modal.Header className="text-center" closeButton>
+              <Modal.Title className="modal-title" style={{fontWeight:'bolder', fontSize:'x-large'}}>Add A Task</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form onSubmit={onSubmit}>
+                        <Form.Group>
+                            <Form.Label>Task</Form.Label>
+                            <Form.Control type="text" placeholder="Enter Task" onChange={(e) => setText(e.target.value)}/>
+                        </Form.Group>
+                        <Form.Group controlId="formBasicPassword">
+                            <Form.Label>Date and Time</Form.Label>
+                            <Form.Control type="text" placeholder="Enter Date and Time" onChange={(e) => setDay(e.target.value)} />
+                        </Form.Group>
+                        <Form.Group controlId="formBasicCheckbox">
+                            <Form.Check type="checkbox" label="Set Reminder?" onChange={(e) => setReminder(e.currentTarget.checked)} />
+                        </Form.Group>
+                        <Modal.Footer>
+              <Button variant="primary" type='submit'>
+                Save Task
+              </Button>
+            </Modal.Footer>
+                </Form>
+               
+            </Modal.Body>
+            
+          </Modal>
+        </>
+      );
+    }
 
 export default AddTask

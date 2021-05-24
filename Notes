@@ -1,0 +1,3 @@
+- + = Convert add form to modal
+- ~ - Convert state to context
+- Replace fetch w/ Axios
