@@ -1,5 +1,5 @@
 import {FaTimes} from 'react-icons/fa'
-import {Card, Modal} from 'react-bootstrap'
+import {Card, Button} from 'react-bootstrap'
 import {useContext} from 'react'
 import ThingsContext from './thingsContext'
 
@@ -17,7 +17,10 @@ const Task = ({task}) => {
                     />
                 </Card.Title>
             </Card.Header>
-            <Card.Body>{task.day}</Card.Body>
+            <Card.Body>
+                {task.day}
+                <Button onClick={() => context.stateTest([])}>test</Button>
+            </Card.Body>
             
         </Card>
     )
